@@ -1,7 +1,7 @@
 import { ArrowUp, ArrowDown } from "react-feather";
 import { useState } from "react";
 
-function Event({ event, timestamp }) {
+function Event({ event, timestamp, transcript }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isClient = event.event_id && !event.event_id.startsWith("event_");
@@ -21,6 +21,7 @@ function Event({ event, timestamp }) {
           {isClient ? "client:" : "server:"}
           &nbsp;{event.type} | {timestamp}
         </div>
+        {transcript?.length > 0 && <div className="font-extrabold text-black-500">{transcript}</div>}
       </div>
       <div
         className={`text-gray-500 bg-gray-200 p-2 rounded-md overflow-x-auto ${
@@ -52,6 +53,7 @@ export default function EventLog({ events }) {
         key={event.event_id}
         event={event}
         timestamp={new Date().toLocaleTimeString()}
+        transcript={event?.response?.output?.[0]?.content?.[0]?.transcript || event?.item?.content?.[0]?.transcript}
       />,
     );
   });

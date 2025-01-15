@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
+import { CloudLightning, CloudOff, Voicemail, MessageSquare } from "react-feather";
 import Button from "./Button";
 
 function SessionStopped({ startSession }) {
@@ -25,8 +25,9 @@ function SessionStopped({ startSession }) {
   );
 }
 
-function SessionActive({ stopSession, sendTextMessage }) {
+function SessionActive({ stopSession, sendTextMessage, pushToTalk, pushToTalkRelease }) {
   const [message, setMessage] = useState("");
+  const [pushToTalkActive, setPushToTalkActive] = useState(false);
 
   function handleSendClientEvent() {
     sendTextMessage(message);
@@ -61,6 +62,19 @@ function SessionActive({ stopSession, sendTextMessage }) {
       <Button onClick={stopSession} icon={<CloudOff height={16} />}>
         disconnect
       </Button>
+      <Button onClick={() => {
+        setPushToTalkActive(!pushToTalkActive);
+        if (pushToTalkActive) {
+          pushToTalkRelease();
+        } else {
+          pushToTalk();
+        }
+      }}
+        className={pushToTalkActive ? "bg-red-600" : "bg-gray-600"}
+        onRelease={pushToTalkRelease}
+        icon={<Voicemail height={16} />}>
+        {pushToTalkActive ? "release" : "push to talk"}
+      </Button>
     </div>
   );
 }
@@ -70,6 +84,7 @@ export default function SessionControls({
   stopSession,
   sendClientEvent,
   sendTextMessage,
+  pushToTalk, pushToTalkRelease,
   serverEvents,
   isSessionActive,
 }) {
@@ -80,6 +95,8 @@ export default function SessionControls({
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
+          pushToTalk={pushToTalk}
+          pushToTalkRelease={pushToTalkRelease}
           serverEvents={serverEvents}
         />
       ) : (

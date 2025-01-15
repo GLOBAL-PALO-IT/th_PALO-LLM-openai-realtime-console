@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import logo from "/assets/openai-logomark.svg";
+import palologo from "/assets/paloitlogo.svg";
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
 import ToolPanel from "./ToolPanel";
@@ -93,6 +94,16 @@ export default function App() {
     }
   }
 
+  function pushToTalk() {
+    console.log("push to talk");
+    sendClientEvent({ type: "input_audio_buffer.clear" });
+  }
+  function pushToTalkRelease() {
+    console.log("push to talk release");
+    sendClientEvent({ type: "input_audio_buffer.commit" });
+    sendClientEvent({ type: "response.create" });
+  }
+
   // Send a text message to the model
   function sendTextMessage(message) {
     const event = {
@@ -133,13 +144,14 @@ export default function App() {
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
+        <div className="flex items-center gap-4 w-full m-4 p-2 border-0 border-b border-solid border-gray-200 bg-gray-500">
           <img style={{ width: "24px" }} src={logo} />
-          <h1>realtime console</h1>
+          <img style={{ width: "44px" }} src={palologo} />
+          <h1>realtime console modified by PALO IT</h1>
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
-        <section className="absolute top-0 left-0 right-[380px] bottom-0 flex">
+        <section className="absolute top-0 left-0 right-[580px] bottom-0 flex">
           <section className="absolute top-0 left-0 right-0 bottom-32 px-4 overflow-y-auto">
             <EventLog events={events} />
           </section>
@@ -151,10 +163,12 @@ export default function App() {
               sendTextMessage={sendTextMessage}
               events={events}
               isSessionActive={isSessionActive}
+              pushToTalk={pushToTalk}
+              pushToTalkRelease={pushToTalkRelease}
             />
           </section>
         </section>
-        <section className="absolute top-0 w-[380px] right-0 bottom-0 p-4 pt-0 overflow-y-auto">
+        <section className="absolute top-0 w-[580px] right-0 bottom-0 p-4 pt-0 overflow-y-auto">
           <ToolPanel
             sendClientEvent={sendClientEvent}
             sendTextMessage={sendTextMessage}

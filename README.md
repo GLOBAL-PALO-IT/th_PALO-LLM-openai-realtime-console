@@ -1,4 +1,12 @@
-# OpenAI Realtime Console
+# PALO IT x OpenAI Realtime Console
+
+A folk from [Original OpenAI Realtime Console](https://github.com/openai/openai-realtime-console) with PALO IT modifications
+
+Additional Changes from PALO IT
+- Added PALO IT logo
+- Show output transcription
+- Change default instruction to Thai language
+- Add push to talk/release button and disable Voice activity detection
 
 This is an example application showing how to use the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
 

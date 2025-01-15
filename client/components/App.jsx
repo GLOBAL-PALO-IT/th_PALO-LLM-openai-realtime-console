@@ -21,11 +21,13 @@ export default function App() {
     const pc = new RTCPeerConnection();
 
     // Set up to play remote audio from the model
+    // Output audio to the audio element
     audioElement.current = document.createElement("audio");
     audioElement.current.autoplay = true;
     pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
     // Add local audio track for microphone input in the browser
+    // Input audio from the user's microphone
     const ms = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
@@ -50,10 +52,14 @@ export default function App() {
       },
     });
 
+    console.log({ sdpResponse });
+
     const answer = {
       type: "answer",
       sdp: await sdpResponse.text(),
     };
+    console.log({ answer });
+    console.log({ pc })
     await pc.setRemoteDescription(answer);
 
     peerConnection.current = pc;
@@ -112,6 +118,7 @@ export default function App() {
     if (dataChannel) {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
+        console.log("message: ",e.data);
         setEvents((prev) => [JSON.parse(e.data), ...prev]);
       });
 

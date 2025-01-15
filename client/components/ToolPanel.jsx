@@ -76,6 +76,7 @@ export default function ToolPanel({
 
     const firstEvent = events[events.length - 1];
     if (!functionAdded && firstEvent.type === "session.created") {
+      //update session especially to add function
       sendClientEvent(sessionUpdate);
       setFunctionAdded(true);
     }

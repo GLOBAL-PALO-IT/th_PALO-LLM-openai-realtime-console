@@ -209,13 +209,15 @@ export default function ToolPanel({
       <div className="h-full bg-gray-50 rounded-md p-4">
         <h2 className="text-lg font-bold mb-4">Color Palette Tools</h2>
         <h2 className="text-sm font-bold mb-4 bg-slate-400 p-2">
-          Usage: Speak to the AI to use the tools <br />- Change the width of
-          the color palette <br />- Scroll the event log up or down by pixels{" "}
-          <br />- Scroll to the top or bottom of the event log <br />- Filter
-          the event log by keywords
+          Usage: Speak to the AI to use the tools <br />- Ask for color
+          recommendation
+          <br />- Change the width of the color palette <br />- Scroll the event
+          log up or down by pixels <br />- Scroll to the top or bottom of the
+          event log <br />- Filter the event log by keywords
         </h2>
         <h2 className="text-sm font-bold mb-4 bg-slate-400 p-2">
           วิธีใช้: พูดกับ AI เพื่อใช้เครื่องมือ
+          <br />- ขอคำแนะนำแม่สี
           <br />- เปลี่ยนความกว้างของจานแม่สี <br />- Scroll event log
           ขึ้นหรือลงตามจำนวนพิกเซล <br />- Scroll ไปที่ด้านบนหรือด้านล่างของ
           event log

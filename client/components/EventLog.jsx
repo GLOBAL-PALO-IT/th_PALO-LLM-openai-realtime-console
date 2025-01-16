@@ -1,7 +1,7 @@
 import { ArrowUp, ArrowDown } from "react-feather";
 import { useState } from "react";
 
-function Event({ event, timestamp, transcript }) {
+function Event({ index, event, timestamp, transcript }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isClient = event.event_id && !event.event_id.startsWith("event_");
@@ -18,10 +18,12 @@ function Event({ event, timestamp, transcript }) {
           <ArrowUp className="text-green-400" />
         )}
         <div className="text-sm text-gray-500">
-          {isClient ? "client:" : "server:"}
+          {index + 1}|{isClient ? "client:" : "server:"}
           &nbsp;{event.type} | {timestamp}
         </div>
-        {transcript?.length > 0 && <div className="font-extrabold text-black-500">{transcript}</div>}
+        {transcript?.length > 0 && (
+          <div className="font-extrabold text-black-500">{transcript}</div>
+        )}
       </div>
       <div
         className={`text-gray-500 bg-gray-200 p-2 rounded-md overflow-x-auto ${
@@ -34,11 +36,23 @@ function Event({ event, timestamp, transcript }) {
   );
 }
 
-export default function EventLog({ events }) {
+export default function EventLog({ events, filterEventLog }) {
   const eventsToDisplay = [];
   let deltaEvents = {};
+  //filterEventLog is an array of keywords to filter the event log
+  filterEventLog = filterEventLog || [];
 
-  events.forEach((event) => {
+  //filter the events by keywords
+  if (filterEventLog.length > 0) {
+    events = events.filter((event) => {
+      const eventString = JSON.stringify(event.type);
+      return filterEventLog.some((keyword) =>
+        eventString.toLowerCase().includes(keyword.toLowerCase()),
+      );
+    });
+  }
+
+  events.forEach((event, index) => {
     if (event.type.endsWith("delta")) {
       if (deltaEvents[event.type]) {
         // for now just log a single event per render pass
@@ -50,10 +64,14 @@ export default function EventLog({ events }) {
 
     eventsToDisplay.push(
       <Event
+        index={index}
         key={event.event_id}
         event={event}
         timestamp={new Date().toLocaleTimeString()}
-        transcript={event?.response?.output?.[0]?.content?.[0]?.transcript || event?.item?.content?.[0]?.transcript}
+        transcript={
+          event?.response?.output?.[0]?.content?.[0]?.transcript ||
+          event?.item?.content?.[0]?.transcript
+        }
       />,
     );
   });

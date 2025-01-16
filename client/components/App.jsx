@@ -9,36 +9,47 @@ export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
+  const [colorPaletteWidth, setColorPaletteWidth] = useState("780");
+  const [eventLogScrollPosition, setEventLogScrollPosition] = useState(0);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const eventLogRef = useRef(null);
+  const [scrollByPixelsLog, setScrollByPixelsLog] = useState(0);
+  const [filterEventLog, setFilterEventLog] = useState([]);
 
   async function startSession() {
     // Get an ephemeral key from the Fastify server
+    //Thai: เรียกใช้ key ที่ถูกสร้างขึ้นใน Fastify server
     const tokenResponse = await fetch("/token");
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
     // Create a peer connection
+    //Thai: สร้าง WebRTC peer connection
     const pc = new RTCPeerConnection();
 
     // Set up to play remote audio from the model
     // Output audio to the audio element
+    //Thai: ตั้งค่าเพื่อเล่น audio จาก model
     audioElement.current = document.createElement("audio");
     audioElement.current.autoplay = true;
     pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
     // Add local audio track for microphone input in the browser
     // Input audio from the user's microphone
+    //Thai: เพิ่ม track สําหรับ audio จาก microphone ของผู้ใช้
     const ms = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
     pc.addTrack(ms.getTracks()[0]);
 
     // Set up data channel for sending and receiving events
+    //Thai: ตั้งค่า data channel สําหรับส่งและรับ events
     const dc = pc.createDataChannel("oai-events");
     setDataChannel(dc);
 
     // Start the session using the Session Description Protocol (SDP)
+    //Thai: เริ่ม session ด้วย Session Description Protocol (SDP)
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
@@ -60,7 +71,9 @@ export default function App() {
       sdp: await sdpResponse.text(),
     };
     console.log({ answer });
-    console.log({ pc })
+    console.log({ pc });
+    //Set remote description
+    //Thai: ตั้งค่า remote description
     await pc.setRemoteDescription(answer);
 
     peerConnection.current = pc;
@@ -81,6 +94,7 @@ export default function App() {
   }
 
   // Send a message to the model
+  //Thai: ส่ง message ไปยัง model
   function sendClientEvent(message) {
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
@@ -128,12 +142,14 @@ export default function App() {
   useEffect(() => {
     if (dataChannel) {
       // Append new server events to the list
+      // Thai: เพิ่ม server events ใหม่เข้าไปใน list
       dataChannel.addEventListener("message", (e) => {
-        console.log("message: ",e.data);
+        console.log("message: ", e.data);
         setEvents((prev) => [JSON.parse(e.data), ...prev]);
       });
 
       // Set session active when the data channel is opened
+      // Thai: เซ็ต session ให้เป็น active เมื่อ data channel เปิด
       dataChannel.addEventListener("open", () => {
         setIsSessionActive(true);
         setEvents([]);
@@ -141,40 +157,82 @@ export default function App() {
     }
   }, [dataChannel]);
 
+  useEffect(() => {
+    if (eventLogRef.current) {
+      eventLogRef.current.scrollTop = eventLogScrollPosition;
+    }
+  }, [eventLogScrollPosition]);
+
+  // Scroll by pixels
+  // Positive values will scroll down, negative values will scroll up
+  const scrollByPixels = (pixels) => {
+    if (eventLogRef.current) {
+      setScrollByPixelsLog(pixels);
+      eventLogRef.current?.scrollBy({
+        top: pixels,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const scrollToTop = () => {
+    if (eventLogRef.current) {
+      eventLogRef.current.scrollTop = 0;
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (eventLogRef.current) {
+      eventLogRef.current.scrollTop = eventLogRef.current.scrollHeight;
+    }
+  };
+
   return (
     <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
+      <nav className="sticky top-0 h-16 flex items-center ">
         <div className="flex items-center gap-4 w-full m-4 p-2 border-0 border-b border-solid border-gray-200 bg-gray-500">
           <img style={{ width: "24px" }} src={logo} />
           <img style={{ width: "44px" }} src={palologo} />
           <h1>realtime console modified by PALO IT</h1>
         </div>
       </nav>
-      <main className="absolute top-16 left-0 right-0 bottom-0">
-        <section className="absolute top-0 left-0 right-[580px] bottom-0 flex">
-          <section className="absolute top-0 left-0 right-0 bottom-32 px-4 overflow-y-auto">
-            <EventLog events={events} />
+      <main className="flex flex-col h-[calc(100vh-4rem)]">
+        <section className="flex flex-1 overflow-hidden">
+          <section className="flex flex-col flex-1">
+            {/* Event Log Container */}
+            <div className="flex-1 overflow-y-auto px-4" ref={eventLogRef}>
+              <EventLog events={events} filterEventLog={filterEventLog} />
+            </div>
+            <div className="h-32 p-4">
+              <SessionControls
+                startSession={startSession}
+                stopSession={stopSession}
+                sendClientEvent={sendClientEvent}
+                sendTextMessage={sendTextMessage}
+                events={events}
+                isSessionActive={isSessionActive}
+                pushToTalk={pushToTalk}
+                pushToTalkRelease={pushToTalkRelease}
+              />
+            </div>
           </section>
-          <section className="absolute h-32 left-0 right-0 bottom-0 p-4">
-            <SessionControls
-              startSession={startSession}
-              stopSession={stopSession}
+          <section
+            style={{ width: `${colorPaletteWidth}px` }}
+            className={`p-4 pt-0 overflow-y-auto`}
+          >
+            <ToolPanel
               sendClientEvent={sendClientEvent}
               sendTextMessage={sendTextMessage}
               events={events}
               isSessionActive={isSessionActive}
-              pushToTalk={pushToTalk}
-              pushToTalkRelease={pushToTalkRelease}
+              setColorPaletteWidth={setColorPaletteWidth}
+              colorPaletteWidth={colorPaletteWidth}
+              scrollByPixels={scrollByPixels}
+              scrollToTop={scrollToTop}
+              scrollToBottom={scrollToBottom}
+              setFilterEventLog={setFilterEventLog}
             />
           </section>
-        </section>
-        <section className="absolute top-0 w-[580px] right-0 bottom-0 p-4 pt-0 overflow-y-auto">
-          <ToolPanel
-            sendClientEvent={sendClientEvent}
-            sendTextMessage={sendTextMessage}
-            events={events}
-            isSessionActive={isSessionActive}
-          />
         </section>
       </main>
     </>

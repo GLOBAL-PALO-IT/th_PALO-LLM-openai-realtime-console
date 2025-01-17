@@ -9,7 +9,8 @@ export const colorPaletteDefinition = {
     properties: {
       theme: {
         type: "string",
-        description: "Description of the theme for the color scheme.",
+        description:
+          "Description of the theme for the color scheme in language that user use.",
       },
       colors: {
         type: "array",
@@ -25,11 +26,11 @@ export const colorPaletteDefinition = {
 };
 
 //Description: This variable defines the function that is used to adjust the width of the color palette in the chatbot.
-export const colorPaletteWidthUIAdjusterDefinition = {
+export const toolPanelWidthUIAdjusterDefinition = {
   type: "function",
-  name: "adjust_color_palette_width",
+  name: "adjust_tool_panel_width",
   description:
-    "Call this function when a user asks to adjust the width of the color palette.",
+    "Call this function when a user asks to adjust the width of the tool panel.",
   parameters: {
     type: "object",
     strict: true,
@@ -37,7 +38,7 @@ export const colorPaletteWidthUIAdjusterDefinition = {
       width: {
         type: "number",
         description:
-          "New width of the color palette in pixels. Default is 780px",
+          "New width of the tool panel/กล่องเครื่องมือ in pixels. Default is 780px",
       },
     },
     required: ["width"],
@@ -101,4 +102,20 @@ export const filterEventLogDefinition = {
     },
     required: ["keywords"],
   },
+};
+
+//Description: This variable defines the function that is used to hide/show the event log
+export const toggleEventLogDefinition = {
+  type: "function",
+  name: "toggle_event_log",
+  description:
+    "Call this function when a user asks to hide/show the event log.",
+};
+
+//Description: This variable defines the function that is used to hide/show the Color Palette
+export const toggleColorPaletteDefinition = {
+  type: "function",
+  name: "toggle_color_palette",
+  description:
+    "Call this function when a user asks to hide/show the color palette/color box.",
 };

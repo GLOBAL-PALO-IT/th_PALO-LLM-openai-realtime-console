@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import logo from "/assets/openai-logomark.svg";
 import palologo from "/assets/paloitlogo.svg";
+import paloitlogo_color from "/assets/paloitlogo_color.svg";
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
 import ToolPanel from "./ToolPanel";
@@ -11,11 +12,16 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const [colorPaletteWidth, setColorPaletteWidth] = useState("780");
   const [eventLogScrollPosition, setEventLogScrollPosition] = useState(0);
+  const [colors, setColors] = useState([]);
+  const [theme, setTheme] = useState();
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
   const eventLogRef = useRef(null);
   const [scrollByPixelsLog, setScrollByPixelsLog] = useState(0);
   const [filterEventLog, setFilterEventLog] = useState([]);
+  const [toggleEventLog, setToggleEventLog] = useState(true);
+  const [toggleColorPalette, setToggleColorPalette] = useState(true);
+  const [toggleToolPanel, setToggleToolPanel] = useState(true);
 
   async function startSession() {
     // Get an ephemeral key from the Fastify server
@@ -190,9 +196,9 @@ export default function App() {
   return (
     <>
       <nav className="sticky top-0 h-16 flex items-center ">
-        <div className="flex items-center gap-4 w-full m-4 p-2 border-0 border-b border-solid border-gray-200 bg-gray-500">
+        <div className="flex items-center gap-4 w-full m-4 p-2 border-0 border-b border-solid border-gray-200">
           <img style={{ width: "24px" }} src={logo} />
-          <img style={{ width: "44px" }} src={palologo} />
+          <img style={{ width: "100px" }} src={paloitlogo_color} />
           <h1>realtime console modified by PALO IT</h1>
         </div>
       </nav>
@@ -201,8 +207,28 @@ export default function App() {
           <section className="flex flex-col flex-1">
             {/* Event Log Container */}
             <div className="flex-1 overflow-y-auto px-4" ref={eventLogRef}>
-              <EventLog events={events} filterEventLog={filterEventLog} />
+              {toggleColorPalette && (
+                <div className="mt-2 mb-5">
+                  {theme && <div className="mb-2">Theme: {theme}</div>}
+                  {colors &&
+                    colors?.map((color) => (
+                      <div
+                        key={color}
+                        className="w-full h-16 rounded-md flex items-center justify-center border border-gray-200"
+                        style={{ backgroundColor: color }}
+                      >
+                        <p className="text-sm font-bold text-black bg-slate-100 rounded-md p-2 border border-black">
+                          {color}
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              )}
+              {toggleEventLog && (
+                <EventLog events={events} filterEventLog={filterEventLog} />
+              )}
             </div>
+
             <div className="h-32 p-4">
               <SessionControls
                 startSession={startSession}
@@ -216,6 +242,7 @@ export default function App() {
               />
             </div>
           </section>
+
           <section
             style={{ width: `${colorPaletteWidth}px` }}
             className={`p-4 pt-0 overflow-y-auto`}
@@ -231,6 +258,14 @@ export default function App() {
               scrollToTop={scrollToTop}
               scrollToBottom={scrollToBottom}
               setFilterEventLog={setFilterEventLog}
+              setColors={setColors}
+              setTheme={setTheme}
+              toggleEventLog={toggleEventLog}
+              toggleColorPalette={toggleColorPalette}
+              toggleToolPanel={toggleToolPanel}
+              setToggleEventLog={setToggleEventLog}
+              setToggleColorPalette={setToggleColorPalette}
+              setToggleToolPanel={setToggleToolPanel}
             />
           </section>
         </section>

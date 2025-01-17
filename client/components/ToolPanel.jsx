@@ -34,7 +34,6 @@ const getSessionUpdate = (language) => {
         filterEventLogDefinition,
         toggleEventLogDefinition,
         toggleColorPaletteDefinition,
-        toggleToolPanelDefinition,
       ],
       tool_choice: "auto",
     },
@@ -310,7 +309,7 @@ export default function ToolPanel({
         ) : (
           <h2 className="text-sm font-bold mb-4 bg-slate-400 p-2 flex flex-row">
             <Mic /> วิธีใช้: พูดกับ AI เพื่อใช้เครื่องมือ
-            <br />- ขอคำแนะนำแม่สี
+            <br />- ขอคำแนะนำจานสี
             <br />- เปลี่ยนความกว้างของกล่องเครื่องมือ/tool panel <br />- Scroll
             event log ขึ้นหรือลงตามจำนวนพิกเซล <br />- Scroll
             ไปที่ด้านบนหรือด้านล่างของ event log

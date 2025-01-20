@@ -87,7 +87,7 @@ export default function ToolPanel({
 }) {
   const [functionAdded, setFunctionAdded] = useState(false);
   const [functionCallOutput, setFunctionCallOutput] = useState(null);
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState("th");
 
   useEffect(() => {
     if (!events || events.length === 0) return;
@@ -309,7 +309,7 @@ export default function ToolPanel({
         ) : (
           <h2 className="text-sm font-bold mb-4 bg-slate-400 p-2 flex flex-row">
             <Mic /> วิธีใช้: พูดกับ AI เพื่อใช้เครื่องมือ
-            <br />- ขอคำแนะนำจานสี
+            <br />- ขอคำแนะนำสี
             <br />- เปลี่ยนความกว้างของกล่องเครื่องมือ/tool panel <br />- Scroll
             event log ขึ้นหรือลงตามจำนวนพิกเซล <br />- Scroll
             ไปที่ด้านบนหรือด้านล่างของ event log

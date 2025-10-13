@@ -9,8 +9,18 @@ A folk from [Original OpenAI Realtime Console](https://github.com/openai/openai-
 - Change default instruction to Thai language
 - Add push to talk/release button and disable Voice activity detection
 - Tools such as color palette, event log filter, and scroll controls
+- **NEW**: Dashboard with navigation to different voice agent demonstrations
+- **NEW**: Airplane ticket customer support voice agent example
 
 This is an example application showing how to use the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
+
+### Pages
+
+The application now includes multiple pages accessible via a dashboard:
+
+1. **Dashboard** (`/`) - Landing page with navigation to different voice agent demonstrations
+2. **Realtime Console** (`/console`) - Interactive console with tools for color palette, event log filtering, and real-time voice interaction
+3. **Airplane Ticket Support** (`/ticket-support`) - Voice-powered customer support agent for airplane ticket inquiries
 
 ## Installation and usage
 

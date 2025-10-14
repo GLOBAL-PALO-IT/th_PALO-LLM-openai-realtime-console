@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { Home } from "react-feather";
 import logo from "/assets/openai-logomark.svg";
 import palologo from "/assets/paloitlogo.svg";
 import paloitlogo_color from "/assets/paloitlogo_color.svg";
@@ -197,6 +199,9 @@ export default function App() {
     <>
       <nav className="sticky top-0 h-16 flex items-center ">
         <div className="flex items-center gap-4 w-full m-4 p-2 border-0 border-b border-solid border-gray-200">
+          <Link to="/" className="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+            <Home size={20} />
+          </Link>
           <img style={{ width: "24px" }} src={logo} />
           <img style={{ width: "100px" }} src={paloitlogo_color} />
           <h1>realtime console modified by PALO IT</h1>

@@ -1,5 +1,5 @@
-import App from "../components/App";
+import Dashboard from "../components/Dashboard";
 
 export default function Index() {
-  return <App />;
+  return <Dashboard />;
 }

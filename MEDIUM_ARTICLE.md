@@ -121,6 +121,8 @@ The Airplane Ticket Support example in the PALO IT console demonstrates how to b
 - Maintain conversation context
 - Integrate with existing systems through function calling
 
+See the detailed [Airplane Ticket Customer Support Agent](#example-airplane-ticket-customer-support-agent) section below for a complete implementation walkthrough.
+
 ### 2. Virtual Assistants
 
 Create sophisticated voice assistants that can:
@@ -364,6 +366,180 @@ Create an intuitive interface:
 - Transcription display for accessibility
 - Manual controls (push-to-talk)
 - Error handling and feedback
+
+## Example: Airplane Ticket Customer Support Agent
+
+Let's explore a real-world implementation from the PALO IT console: the Airplane Ticket Support agent. This example demonstrates how to build a practical voice-powered customer support system that handles common airline customer service scenarios.
+
+### Use Case Overview
+
+The Airplane Ticket Support agent assists customers with:
+- Flight booking and reservations
+- Ticket modifications (date changes, seat selection, upgrades)
+- Check-in assistance
+- Baggage policies and fees
+- Flight status and delays
+- Cancellations and refunds
+- Frequent flyer program inquiries
+- General travel information
+
+### Implementation Walkthrough
+
+#### 1. System Instructions
+
+The agent uses carefully crafted system instructions to define its role and behavior:
+
+```javascript
+const SYSTEM_INSTRUCTION = `You are a helpful and friendly airplane ticket customer support agent. Your role is to assist customers with:
+
+1. Flight booking and reservations
+2. Ticket modifications (date changes, seat selection, upgrades)
+3. Check-in assistance
+4. Baggage policies and fees
+5. Flight status and delays
+6. Cancellations and refunds
+7. Frequent flyer program inquiries
+8. General travel information
+
+Be professional, empathetic, and efficient. Always confirm important details with the customer before making changes. If you need information you don't have, politely ask the customer to provide it.
+
+Speak in a natural, conversational tone. Keep your responses concise but informative.`;
+```
+
+These instructions ensure the AI stays in character and provides appropriate responses for the customer support context.
+
+#### 2. Session Configuration
+
+The agent is configured with specific settings optimized for customer support interactions:
+
+```javascript
+const sessionUpdateEvent = {
+  type: "session.update",
+  session: {
+    modalities: ["text", "audio"],
+    instructions: SYSTEM_INSTRUCTION,
+    voice: "alloy",
+    input_audio_format: "pcm16",
+    output_audio_format: "pcm16",
+    input_audio_transcription: {
+      model: "whisper-1",
+    },
+    turn_detection: null, // Disable VAD for push-to-talk
+    temperature: 0.8,
+  },
+};
+```
+
+Key configuration choices:
+- **Push-to-Talk Mode**: VAD (Voice Activity Detection) is disabled, giving customers control over when they speak
+- **Transcription Enabled**: Uses Whisper for accurate transcription of customer inputs
+- **Moderate Temperature**: Set to 0.8 for natural yet consistent responses
+
+#### 3. User Interface Design
+
+The interface includes several customer-friendly features:
+
+**Conversation Display**: Real-time transcription shows both user and agent responses, helping customers track the conversation:
+
+```javascript
+if (event.type === "response.audio_transcript.delta") {
+  setTranscription((prev) => prev + event.delta);
+} else if (event.type === "response.audio_transcript.done") {
+  setTranscription((prev) => prev + "\n\n");
+} else if (event.type === "conversation.item.input_audio_transcription.completed") {
+  setTranscription((prev) => prev + "User: " + event.transcript + "\n");
+}
+```
+
+**Helpful Context**: The UI provides example requests to guide customers:
+- "I need to change my flight date"
+- "What's the baggage allowance?"
+- "Can I upgrade to business class?"
+- "I need help with online check-in"
+- "What's the status of my flight?"
+
+**Push-to-Talk Controls**: Simple, clear controls for starting conversations:
+
+```javascript
+function pushToTalk() {
+  sendClientEvent({ type: "input_audio_buffer.clear" });
+}
+
+function pushToTalkRelease() {
+  sendClientEvent({ type: "input_audio_buffer.commit" });
+  sendClientEvent({ type: "response.create" });
+}
+```
+
+#### 4. Key Features
+
+**Multi-Modal Support**: Customers can interact via voice or text, providing flexibility for different situations and preferences.
+
+**Visual Feedback**: The interface shows clear indicators for:
+- Connection status
+- When the agent is listening
+- When the agent is responding
+- Conversation history
+
+**Event Logging**: For debugging and quality assurance, all interactions are logged, allowing developers to improve the system over time.
+
+### Extending the Example
+
+To make this a production-ready system, consider adding:
+
+**Function Calling for Real Data**: Integrate with airline backend systems to check actual flight information:
+
+```javascript
+const functions = [
+  {
+    name: "check_flight_status",
+    description: "Check real-time flight status",
+    parameters: {
+      type: "object",
+      properties: {
+        flight_number: { type: "string" },
+        date: { type: "string", format: "date" }
+      },
+      required: ["flight_number"]
+    }
+  },
+  {
+    name: "modify_booking",
+    description: "Modify an existing booking",
+    parameters: {
+      type: "object",
+      properties: {
+        booking_reference: { type: "string" },
+        modification_type: { 
+          type: "string",
+          enum: ["date_change", "seat_selection", "upgrade"]
+        },
+        new_value: { type: "string" }
+      },
+      required: ["booking_reference", "modification_type"]
+    }
+  }
+];
+```
+
+**Authentication**: Add user authentication to access booking information securely.
+
+**Multi-Language Support**: Extend the system to support multiple languages for international customers.
+
+**Sentiment Analysis**: Monitor customer sentiment to escalate to human agents when needed.
+
+### Benefits of This Approach
+
+The Airplane Ticket Support example demonstrates several advantages of using the Realtime API:
+
+1. **Natural Interactions**: Customers can speak naturally without rigid commands
+2. **Quick Resolution**: Low latency means faster problem-solving
+3. **Accessibility**: Voice interface makes support accessible to more users
+4. **24/7 Availability**: AI agent can handle inquiries around the clock
+5. **Scalability**: Can handle multiple customers simultaneously
+6. **Consistency**: Provides consistent, accurate information every time
+
+This practical example shows how the Realtime API can transform customer support experiences, making them more efficient, accessible, and user-friendly. The same patterns can be applied to other customer service scenarios across various industries.
 
 ## Debugging and Monitoring
 

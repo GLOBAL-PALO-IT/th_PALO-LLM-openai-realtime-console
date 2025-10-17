@@ -14,6 +14,8 @@ A folk from [Original OpenAI Realtime Console](https://github.com/openai/openai-
 
 This is an example application showing how to use the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
 
+📖 **[Read our comprehensive Medium article: "Build App with OpenAI Realtime API"](./MEDIUM_ARTICLE.md)** - Learn about the latest features, best practices, and real-world use cases.
+
 ### Pages
 
 The application now includes multiple pages accessible via a dashboard:
